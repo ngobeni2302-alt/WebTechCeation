@@ -117,9 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check session
     const checkSession = () => {
-        if (localStorage.getItem('isLoggedIn') === 'true') {
+        if (sessionStorage.getItem('isLoggedIn') === 'true') {
             authOverlay.classList.add('hidden');
-            setTimeout(() => { if(localStorage.getItem('isLoggedIn') === 'true') authOverlay.style.display = 'none'; }, 500);
+            setTimeout(() => { if(sessionStorage.getItem('isLoggedIn') === 'true') authOverlay.style.display = 'none'; }, 500);
         } else {
             authOverlay.style.display = 'flex';
             setTimeout(() => { authOverlay.classList.remove('hidden'); }, 10);
@@ -143,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     signupForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const user = document.getElementById('signupUser').value.trim();
+        const email = document.getElementById('signupEmail').value.trim();
         const pass = document.getElementById('signupPass').value;
 
         if (!passwordRegex.test(pass)) {
@@ -151,38 +152,75 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const users = JSON.parse(localStorage.getItem('users') || '{}');
+        
+        // Check if username or email already exists
         if (users[user]) {
             signupError.textContent = 'Username already exists.';
             return;
         }
+        
+        const emailExists = Object.values(users).some(u => 
+            (typeof u === 'object' && u.email === email) || (typeof u === 'string' && u === email)
+        );
+        if (emailExists) {
+            signupError.textContent = 'Email already registered.';
+            return;
+        }
 
-        users[user] = pass;
+        // Store user with email and password
+        users[user] = {
+            pass: pass,
+            email: email
+        };
         localStorage.setItem('users', JSON.stringify(users));
         
-        // Auto login
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('currentUser', user);
+        // Auto login (Session based)
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('currentUser', user);
         checkSession();
     });
 
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const user = document.getElementById('loginUser').value.trim();
+        const ident = document.getElementById('loginUser').value.trim();
         const pass = document.getElementById('loginPass').value;
 
         const users = JSON.parse(localStorage.getItem('users') || '{}');
-        if (users[user] && users[user] === pass) {
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('currentUser', user);
-            checkSession();
+        
+        // Search by username or email
+        let foundUser = null;
+        let username = null;
+
+        if (users[ident]) {
+            foundUser = users[ident];
+            username = ident;
         } else {
-            loginError.textContent = 'Invalid username or password.';
+            // Check if 'ident' matches any user's email
+            for (const [uname, udata] of Object.entries(users)) {
+                if (typeof udata === 'object' && udata.email === ident) {
+                    foundUser = udata;
+                    username = uname;
+                    break;
+                }
+            }
         }
+
+        if (foundUser) {
+            const storedPass = (typeof foundUser === 'object') ? foundUser.pass : foundUser;
+            if (storedPass === pass) {
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('currentUser', username);
+                checkSession();
+                return;
+            }
+        }
+        
+        loginError.textContent = 'Invalid username/email or password.';
     });
 
     logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('isLoggedIn');
+        sessionStorage.removeItem('currentUser');
         checkSession();
         
         // Reset forms
