@@ -482,19 +482,26 @@ h2::after {
     background: transparent;
     border: 1px solid #ff6b6b;
     color: #ff6b6b;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
     display: flex;
-    justify-content: center;
+    gap: 12px;
     align-items: center;
-    font-size: 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
     align-self: flex-start;
+    font-family: var(--font-main);
 }
 
 .logout-btn:hover {
     background: rgba(255, 107, 107, 0.1);
-    box-shadow: 0 0 10px rgba(255, 107, 107, 0.2);
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
+    transform: translateY(-2px);
+}
+
+.logout-icon {
+    width: 20px;
+    height: 20px;
 }
