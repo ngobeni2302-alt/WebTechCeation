@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEBHub Premium</title>
+    <meta name="description" content="A premium, dark navy-themed web experience accessible from the terminal.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="authOverlay" class="auth-overlay">
+        <div class="auth-box" id="loginBox">
+            <h2>Welcome Back</h2>
+            <form id="loginForm">
+                <input type="text" id="loginUser" placeholder="Username" required autocomplete="username">
+                <input type="password" id="loginPass" placeholder="Password" required autocomplete="current-password">
+                <button type="submit" class="cta-button auth-btn">Login</button>
+            </form>
+            <p class="auth-switch">Don't have an account? <span id="showSignup">Sign up</span></p>
+            <p class="auth-error" id="loginError"></p>
+        </div>
+
+        <div class="auth-box hidden" id="signupBox">
+            <h2>Create Account</h2>
+            <form id="signupForm">
+                <input type="text" id="signupUser" placeholder="Username" required autocomplete="username">
+                <input type="password" id="signupPass" placeholder="Password" required autocomplete="new-password">
+                <div class="password-hint">8+ chars, 1 uppercase, 1 number, 1 special (!#$&-.,)</div>
+                <button type="submit" class="cta-button auth-btn">Sign Up</button>
+            </form>
+            <p class="auth-switch">Already have an account? <span id="showLogin">Login</span></p>
+            <p class="auth-error" id="signupError"></p>
+        </div>
+    </div>
+    <header>
+        <nav>
+            <a href="#" class="logo">WEBHub</a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><button class="theme-toggle-btn nav-theme-toggle">☀️</button></li>
+            </ul>
+            <div class="menu-toggle" id="menuToggle">☰</div>
+        </nav>
+
+        <div class="side-panel" id="sidePanel">
+            <button class="theme-toggle-btn" id="sideThemeToggle">☀️</button>
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+            
+            <button id="logoutBtn" class="logout-btn" title="Logout">⏻</button>
+        </div>
+        <div class="overlay" id="overlay"></div>
+
+        <main id="home" class="hero">
+            <h1 class="animate">WHO ARE WE</h1>
+            <p class="animate" style="animation-delay: 0.2s;">We are the voice for the hopeless romantics. The One's who know beauty when they see it. The One's whose hearts are filled with unwavering LOVE. The One's who capture every moment, even the smallest achievements!</p>
+            <a href="#about" class="cta-button animate" style="animation-delay: 0.4s;">Explore More</a>
+        </main>
+    </header>
+
+    <section id="about">
+        <h2>What Do We Offer!?</h2>
+        <div class="grid">
+            <div class="card animate">
+                <img src="assets/birthday_website_preview_1775633285058.png" alt="Birthday Website" class="clickable-image" style="width: 100%; border-radius: 8px;">
+                <h3 style="margin-top: 1rem;">Birthday Websites</h3>
+                <p>Celebrate life's milestones with vibrant and joyful designs!</p>
+            </div>
+            <div class="card animate" style="animation-delay: 0.2s;">
+                <img src="assets/love_website_preview_1775633355080.png" alt="Love Website" class="clickable-image" style="width: 100%; border-radius: 8px;">
+                <h3 style="margin-top: 1rem;">Love & Anniversary</h3>
+                <p>Immortalize your precious moments with an elegant aesthetic!</p>
+            </div>
+            <div class="card animate" style="animation-delay: 0.4s;">
+                <img src="assets/business_website_preview_1775633462836.png" alt="Business Website" class="clickable-image" style="width: 100%; border-radius: 8px;">
+                <h3 style="margin-top: 1rem;">Business Websites</h3>
+                <p>Establish a strong and professional corporate presence!</p>
+            </div>
+            <div class="card animate" style="animation-delay: 0.6s;">
+                <img src="assets/portfolio_website_preview_1775633502924.png" alt="Portfolio" class="clickable-image" style="width: 100%; border-radius: 8px;">
+                <h3 style="margin-top: 1rem;">And More! (Portfolios)</h3>
+                <p>Sleek, modern designs perfect for showcasing your creative work! Dream It And We'll Make It Come True!</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="features">
+        <h2>Key Features</h2>
+        <div class="grid">
+            <div class="card animate">
+                <h3>Responsive Layout</h3>
+                <p>Optimized for mobile, tablet, and desktop screens.</p>
+            </div>
+            <div class="card animate" style="animation-delay: 0.2s;">
+                <h3>Modern Stack</h3>
+                <p>Using semantic HTML5, CSS3 Variables, and Vanilla JavaScript.</p>
+            </div>
+            <div class="card animate" style="animation-delay: 0.4s;">
+                <h3>Customizable</h3>
+                <p>Easy to adapt and extend for your specific needs.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer style="padding: 2rem 10%; text-align: center; color: var(--text-secondary); border-top: 1px solid var(--card-border);">
+        <p>&copy; 2026 WEBHub. Created by VALAMBYATech for the People.</p>
+    </footer>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal">
+        <span class="close-modal" id="closeModal">&times;</span>
+        <img class="image-modal-content" id="modalImage">
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
