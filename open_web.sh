@@ -11,9 +11,8 @@ echo "------------------------------------------------"
 # Change to the directory where this script is located
 cd "$DIRECTORY"
 
-# Start the Python HTTP server in the background
-# We use a subshell to silence output and run in background
-(python3 -m http.server $PORT > /dev/null 2>&1 &)
+# Start the Custom Auth Server in the background
+(python3 server.py > /dev/null 2>&1 &)
 
 # Wait a second for the server to start
 sleep 1

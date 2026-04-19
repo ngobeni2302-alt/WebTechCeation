@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
         signupError.textContent = '';
     });
 
-    signupForm.addEventListener('submit', (e) => {
+    signupForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const user = document.getElementById('signupUser').value.trim();
         const email = document.getElementById('signupEmail').value.trim();
@@ -151,71 +151,49 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const users = JSON.parse(localStorage.getItem('users') || '{}');
-        
-        // Check if username or email already exists
-        if (users[user]) {
-            signupError.textContent = 'Username already exists.';
-            return;
+        try {
+            const response = await fetch('/api/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user, email, password: pass })
+            });
+            const result = await response.json();
+            
+            if (result.success) {
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('currentUser', user);
+                checkSession();
+            } else {
+                signupError.textContent = result.message;
+            }
+        } catch (error) {
+            signupError.textContent = 'Error connecting to server.';
         }
-        
-        const emailExists = Object.values(users).some(u => 
-            (typeof u === 'object' && u.email === email) || (typeof u === 'string' && u === email)
-        );
-        if (emailExists) {
-            signupError.textContent = 'Email already registered.';
-            return;
-        }
-
-        // Store user with email and password
-        users[user] = {
-            pass: pass,
-            email: email
-        };
-        localStorage.setItem('users', JSON.stringify(users));
-        
-        // Auto login (Session based)
-        sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('currentUser', user);
-        checkSession();
     });
 
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const ident = document.getElementById('loginUser').value.trim();
         const pass = document.getElementById('loginPass').value;
 
-        const users = JSON.parse(localStorage.getItem('users') || '{}');
-        
-        // Search by username or email
-        let foundUser = null;
-        let username = null;
-
-        if (users[ident]) {
-            foundUser = users[ident];
-            username = ident;
-        } else {
-            // Check if 'ident' matches any user's email
-            for (const [uname, udata] of Object.entries(users)) {
-                if (typeof udata === 'object' && udata.email === ident) {
-                    foundUser = udata;
-                    username = uname;
-                    break;
-                }
-            }
-        }
-
-        if (foundUser) {
-            const storedPass = (typeof foundUser === 'object') ? foundUser.pass : foundUser;
-            if (storedPass === pass) {
+        try {
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ident, password: pass })
+            });
+            const result = await response.json();
+            
+            if (result.success) {
                 sessionStorage.setItem('isLoggedIn', 'true');
-                sessionStorage.setItem('currentUser', username);
+                sessionStorage.setItem('currentUser', result.username);
                 checkSession();
-                return;
+            } else {
+                loginError.textContent = result.message;
             }
+        } catch (error) {
+            loginError.textContent = 'Error connecting to server.';
         }
-        
-        loginError.textContent = 'Invalid username/email or password.';
     });
 
     logoutBtn.addEventListener('click', () => {
@@ -232,6 +210,35 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ensure side menu closes
         sidePanel.classList.remove('open');
         overlay.classList.remove('visible');
+    });
+
+    // Password Visibility Toggle
+    document.querySelectorAll('.password-toggle').forEach(button => {
+        button.addEventListener('click', () => {
+            const wrapper = button.closest('.password-wrapper');
+            const input = wrapper.querySelector('input');
+            const isPassword = input.type === 'password';
+            
+            input.type = isPassword ? 'text' : 'password';
+            button.classList.toggle('visible', isPassword);
+            
+            // Optional: update icon path to "eye-off"
+            if (isPassword) {
+                button.innerHTML = `
+                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                `;
+            } else {
+                button.innerHTML = `
+                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                `;
+            }
+        });
     });
 });
 
