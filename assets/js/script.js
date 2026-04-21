@@ -1,26 +1,33 @@
 // Interactivity and animations
 document.addEventListener('DOMContentLoaded', () => {
-    // Theme toggling
-    const themeButtons = document.querySelectorAll('.theme-toggle-btn');
+    // Theme toggling (Uiverse Checkboxes)
+    const themeButtons = document.querySelectorAll('.theme__toggle');
     const currentTheme = localStorage.getItem('theme') || 'dark';
 
     if (currentTheme === 'light') {
         document.documentElement.setAttribute('data-theme', 'light');
-        themeButtons.forEach(btn => btn.textContent = '🌙');
+        themeButtons.forEach(btn => btn.checked = false); // Unchecked is light mode
+    } else {
+        themeButtons.forEach(btn => btn.checked = true); // Checked is dark mode
     }
 
     themeButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-            if (isLight) {
-                document.documentElement.removeAttribute('data-theme');
-                localStorage.setItem('theme', 'dark');
-                themeButtons.forEach(b => b.textContent = '☀️');
-            } else {
+        btn.addEventListener('change', (e) => {
+            const isDark = e.target.checked;
+            if (!isDark) {
+                // Switch to light
                 document.documentElement.setAttribute('data-theme', 'light');
                 localStorage.setItem('theme', 'light');
-                themeButtons.forEach(b => b.textContent = '🌙');
+            } else {
+                // Switch to dark
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
             }
+            
+            // Sync all toggles
+            themeButtons.forEach(b => {
+                if(b !== e.target) b.checked = e.target.checked;
+            });
         });
     });
 

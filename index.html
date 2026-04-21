@@ -71,13 +71,47 @@
                 <li><a href="#about">About</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#contact">Contact</a></li>
-                <li><button class="theme-toggle-btn nav-theme-toggle" aria-label="Toggle dark and light theme">☀️</button></li>
+                <li>
+                    <label for="themeNav" class="theme" aria-label="Toggle dark and light theme">
+                        <span class="theme__toggle-wrap">
+                            <input id="themeNav" class="theme__toggle theme-toggle-btn" type="checkbox" role="switch" name="theme" checked>
+                            <span class="theme__icon">
+                                <span class="theme__icon-part"></span>
+                                <span class="theme__icon-part"></span>
+                                <span class="theme__icon-part"></span>
+                                <span class="theme__icon-part"></span>
+                                <span class="theme__icon-part"></span>
+                                <span class="theme__icon-part"></span>
+                                <span class="theme__icon-part"></span>
+                                <span class="theme__icon-part"></span>
+                                <span class="theme__icon-part"></span>
+                            </span>
+                        </span>
+                    </label>
+                </li>
             </ul>
             <div class="menu-toggle" id="menuToggle" aria-label="Open mobile menu" role="button" aria-expanded="false" tabindex="0">☰</div>
         </nav>
 
         <div class="side-panel" id="sidePanel" aria-hidden="true">
-            <button class="theme-toggle-btn" id="sideThemeToggle">☀️</button>
+            <div style="margin-top: 1rem; margin-bottom: 2rem;">
+                <label for="themeSide" class="theme" aria-label="Toggle dark and light theme">
+                    <span class="theme__toggle-wrap">
+                        <input id="themeSide" class="theme__toggle theme-toggle-btn" type="checkbox" role="switch" name="theme" checked>
+                        <span class="theme__icon">
+                            <span class="theme__icon-part"></span>
+                            <span class="theme__icon-part"></span>
+                            <span class="theme__icon-part"></span>
+                            <span class="theme__icon-part"></span>
+                            <span class="theme__icon-part"></span>
+                            <span class="theme__icon-part"></span>
+                            <span class="theme__icon-part"></span>
+                            <span class="theme__icon-part"></span>
+                            <span class="theme__icon-part"></span>
+                        </span>
+                    </span>
+                </label>
+            </div>
             <a href="#home">Home</a>
             <a href="#about">About</a>
             <a href="#features">Features</a>
