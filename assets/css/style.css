@@ -692,11 +692,18 @@ h2::after {
 .theme {
   display: flex;
   align-items: center;
+  justify-content: center;
   -webkit-tap-highlight-color: transparent;
   font-size: 5px;
   transform: scale(0.375);
-  transform-origin: center right;
+  transform-origin: center;
   cursor: pointer;
+  margin: 0;
+}
+
+.nav-links li {
+  display: flex;
+  align-items: center;
 }
 
 .theme__icon {
