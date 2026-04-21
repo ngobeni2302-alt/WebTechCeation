@@ -213,7 +213,7 @@ nav {
     align-items: center;
     text-align: center;
     padding: 0 10%;
-    background: linear-gradient(var(--hero-overlay), var(--hero-overlay)), url('hero_bg.png');
+    background: linear-gradient(var(--hero-overlay), var(--hero-overlay)), url('../images/hero_bg.png');
     background-size: cover;
     background-position: center;
 }

@@ -3,17 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WEBHub Premium</title>
-    <meta name="description" content="A premium, dark navy-themed web experience accessible from the terminal.">
-    <link rel="stylesheet" href="style.css">
+    <title>WEBHub Premium Web Design</title>
+    <meta name="description" content="A premium, dark navy-themed web experience accessible from the terminal. Web design services.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="WEBHub Premium Web Design">
+    <meta property="og:description" content="Get premium, responsive websites. Explore our portfolio of business, birthday, and love websites.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="assets/images/website_qr.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="WEBHub Premium Web Design">
+    <meta name="twitter:description" content="Get premium, responsive websites. Explore our portfolio of business, birthday, and love websites.">
+    <meta name="twitter:image" content="assets/images/website_qr.png">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebDesignCompany",
+      "name": "WEBHub Premium",
+      "description": "Premium web design and development agency offering responsive static websites, portfolios, and bespoke corporate platforms.",
+      "url": "",
+      "logo": "assets/images/website_qr.png"
+    }
+    </script>
+
+    <link rel="stylesheet" href="assets/css/style.css">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="authOverlay" class="auth-overlay">
-        <div class="auth-box" id="loginBox">
+    <div id="authOverlay" class="auth-overlay" aria-hidden="false" role="dialog" aria-modal="true" aria-label="Authentication">
+        <div class="auth-box" id="loginBox" aria-hidden="false">
             <h2>Welcome Back</h2>
             <form id="loginForm">
                 <input type="text" id="loginUser" placeholder="Username or Email" required autocomplete="username">
@@ -32,11 +60,11 @@
             <p class="auth-error" id="loginError"></p>
             <div class="auth-qr">
                 <p>Scan to visit on mobile:</p>
-                <img src="website_qr.png" alt="QR Code" style="width: 120px; height: 120px; margin-top: 10px; background: white; padding: 5px; border-radius: 4px;">
+                <img src="assets/images/website_qr.png" alt="WEBHub Mobile Access QR Code" style="width: 120px; height: 120px; margin-top: 10px; background: white; padding: 5px; border-radius: 4px;">
             </div>
         </div>
 
-        <div class="auth-box hidden" id="signupBox">
+        <div class="auth-box hidden" id="signupBox" aria-hidden="true">
             <h2>Create Account</h2>
             <form id="signupForm">
                 <input type="text" id="signupUser" placeholder="Username" required autocomplete="username">
@@ -58,19 +86,19 @@
         </div>
     </div>
     <header>
-        <nav>
+        <nav aria-label="Main Navigation">
             <a href="#" class="logo">WEBHub</a>
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#contact">Contact</a></li>
-                <li><button class="theme-toggle-btn nav-theme-toggle">☀️</button></li>
+                <li><button class="theme-toggle-btn nav-theme-toggle" aria-label="Toggle dark and light theme">☀️</button></li>
             </ul>
-            <div class="menu-toggle" id="menuToggle">☰</div>
+            <div class="menu-toggle" id="menuToggle" aria-label="Open mobile menu" role="button" aria-expanded="false" tabindex="0">☰</div>
         </nav>
 
-        <div class="side-panel" id="sidePanel">
+        <div class="side-panel" id="sidePanel" aria-hidden="true">
             <button class="theme-toggle-btn" id="sideThemeToggle">☀️</button>
             <a href="#home">Home</a>
             <a href="#about">About</a>
@@ -97,44 +125,44 @@
     <section id="about">
         <h2>What Do We Offer!?</h2>
         <div class="grid">
-            <div class="card animate">
-                <img src="assets/birthday_website_preview_1775633285058.png" alt="Birthday Website" class="clickable-image" style="width: 100%; border-radius: 8px;">
+            <article class="card animate">
+                <img src="assets/images/birthday_website_preview_1775633285058.png" alt="Vibrant and joyful birthday website preview design template" class="clickable-image" style="width: 100%; border-radius: 8px;" loading="lazy">
                 <h3 style="margin-top: 1rem;">Birthday Websites</h3>
                 <p>Celebrate life's milestones with vibrant and joyful designs!</p>
-            </div>
-            <div class="card animate" style="animation-delay: 0.2s;">
-                <img src="assets/love_website_preview_1775633355080.png" alt="Love Website" class="clickable-image" style="width: 100%; border-radius: 8px;">
+            </article>
+            <article class="card animate" style="animation-delay: 0.2s;">
+                <img src="assets/images/love_website_preview_1775633355080.png" alt="Elegant love and anniversary website preview design template" class="clickable-image" style="width: 100%; border-radius: 8px;" loading="lazy">
                 <h3 style="margin-top: 1rem;">Love & Anniversary</h3>
                 <p>Immortalize your precious moments with an elegant aesthetic!</p>
-            </div>
-            <div class="card animate" style="animation-delay: 0.4s;">
-                <img src="assets/business_website_preview_1775633462836.png" alt="Business Website" class="clickable-image" style="width: 100%; border-radius: 8px;">
+            </article>
+            <article class="card animate" style="animation-delay: 0.4s;">
+                <img src="assets/images/business_website_preview_1775633462836.png" alt="Professional corporate business website preview design template" class="clickable-image" style="width: 100%; border-radius: 8px;" loading="lazy">
                 <h3 style="margin-top: 1rem;">Business Websites</h3>
                 <p>Establish a strong and professional corporate presence!</p>
-            </div>
-            <div class="card animate" style="animation-delay: 0.6s;">
-                <img src="assets/portfolio_website_preview_1775633502924.png" alt="Portfolio" class="clickable-image" style="width: 100%; border-radius: 8px;">
+            </article>
+            <article class="card animate" style="animation-delay: 0.6s;">
+                <img src="assets/images/portfolio_website_preview_1775633502924.png" alt="Sleek and modern portfolio website preview design template" class="clickable-image" style="width: 100%; border-radius: 8px;" loading="lazy">
                 <h3 style="margin-top: 1rem;">And More! (Portfolios)</h3>
                 <p>Sleek, modern designs perfect for showcasing your creative work! Dream It And We'll Make It Come True!</p>
-            </div>
+            </article>
         </div>
     </section>
 
     <section id="features">
         <h2>Key Features</h2>
         <div class="grid">
-            <div class="card animate">
+            <article class="card animate">
                 <h3>Responsive Layout</h3>
                 <p>Optimized for mobile, tablet, and desktop screens.</p>
-            </div>
-            <div class="card animate" style="animation-delay: 0.2s;">
+            </article>
+            <article class="card animate" style="animation-delay: 0.2s;">
                 <h3>Modern Stack</h3>
                 <p>Using semantic HTML5, CSS3 Variables, and Vanilla JavaScript.</p>
-            </div>
-            <div class="card animate" style="animation-delay: 0.4s;">
+            </article>
+            <article class="card animate" style="animation-delay: 0.4s;">
                 <h3>Customizable</h3>
                 <p>Easy to adapt and extend for your specific needs.</p>
-            </div>
+            </article>
         </div>
     </section>
 
@@ -144,11 +172,11 @@
     </footer>
 
     <!-- Image Modal -->
-    <div id="imageModal" class="image-modal">
-        <span class="close-modal" id="closeModal">&times;</span>
-        <img class="image-modal-content" id="modalImage">
+    <div id="imageModal" class="image-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Image Preview">
+        <span class="close-modal" id="closeModal" aria-label="Close image modal" role="button" tabindex="0">&times;</span>
+        <img class="image-modal-content" id="modalImage" alt="Expanded image preview">
     </div>
 
-    <script src="script.js"></script>
+    <script src="assets/js/script.js" defer></script>
 </body>
 </html>

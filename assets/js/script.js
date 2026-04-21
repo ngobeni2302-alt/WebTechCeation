@@ -31,8 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const overlay = document.getElementById('overlay');
 
     const toggleMenu = () => {
-        sidePanel.classList.toggle('open');
+        const isOpen = sidePanel.classList.toggle('open');
         overlay.classList.toggle('visible');
+        menuToggle.setAttribute('aria-expanded', isOpen);
+        sidePanel.setAttribute('aria-hidden', !isOpen);
     };
 
     menuToggle.addEventListener('click', toggleMenu);
@@ -79,17 +81,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.clickable-image').forEach(img => {
         img.addEventListener('click', () => {
             imageModal.classList.add('visible');
+            imageModal.setAttribute('aria-hidden', 'false');
             modalImage.src = img.src;
         });
     });
 
     closeModal.addEventListener('click', () => {
         imageModal.classList.remove('visible');
+        imageModal.setAttribute('aria-hidden', 'true');
     });
 
     imageModal.addEventListener('click', (e) => {
         if (e.target === imageModal) {
             imageModal.classList.remove('visible');
+            imageModal.setAttribute('aria-hidden', 'true');
         }
     });
 
@@ -119,10 +124,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkSession = () => {
         if (sessionStorage.getItem('isLoggedIn') === 'true') {
             authOverlay.classList.add('hidden');
+            authOverlay.setAttribute('aria-hidden', 'true');
             setTimeout(() => { if(sessionStorage.getItem('isLoggedIn') === 'true') authOverlay.style.display = 'none'; }, 500);
         } else {
             authOverlay.style.display = 'flex';
-            setTimeout(() => { authOverlay.classList.remove('hidden'); }, 10);
+            setTimeout(() => { 
+                authOverlay.classList.remove('hidden'); 
+                authOverlay.setAttribute('aria-hidden', 'false');
+            }, 10);
         }
     };
 
@@ -130,13 +139,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     showSignupBtn.addEventListener('click', () => {
         loginBox.classList.add('hidden');
+        loginBox.setAttribute('aria-hidden', 'true');
         signupBox.classList.remove('hidden');
+        signupBox.setAttribute('aria-hidden', 'false');
         loginError.textContent = '';
     });
 
     showLoginBtn.addEventListener('click', () => {
         signupBox.classList.add('hidden');
+        signupBox.setAttribute('aria-hidden', 'true');
         loginBox.classList.remove('hidden');
+        loginBox.setAttribute('aria-hidden', 'false');
         signupError.textContent = '';
     });
 
@@ -209,6 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Ensure side menu closes
         sidePanel.classList.remove('open');
+        sidePanel.setAttribute('aria-hidden', 'true');
+        menuToggle.setAttribute('aria-expanded', 'false');
         overlay.classList.remove('visible');
     });
 
