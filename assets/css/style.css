@@ -693,9 +693,8 @@ h2::after {
   display: flex;
   align-items: center;
   -webkit-tap-highlight-color: transparent;
-  font-size: 8px; /* Resize relative to navbar */
+  font-size: 5px; /* Resize relative to navbar */
   cursor: pointer;
-  margin-top: 5px;
 }
 
 .theme__icon {
