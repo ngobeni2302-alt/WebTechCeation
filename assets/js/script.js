@@ -104,16 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auth Logic
     const authOverlay = document.getElementById('authOverlay');
     const loginBox = document.getElementById('loginBox');
-    const signupBox = document.getElementById('signupBox');
-    
-    const showSignupBtn = document.getElementById('showSignup');
-    const showLoginBtn = document.getElementById('showLogin');
-    
     const loginForm = document.getElementById('loginForm');
-    const signupForm = document.getElementById('signupForm');
-    
     const loginError = document.getElementById('loginError');
-    const signupError = document.getElementById('signupError');
     
     const logoutBtn = document.getElementById('logoutBtn');
 
@@ -126,63 +118,32 @@ document.addEventListener('DOMContentLoaded', () => {
             authOverlay.classList.add('hidden');
             authOverlay.setAttribute('aria-hidden', 'true');
             setTimeout(() => { if(sessionStorage.getItem('isLoggedIn') === 'true') authOverlay.style.display = 'none'; }, 500);
-        } else {
-            authOverlay.style.display = 'flex';
-            setTimeout(() => { 
-                authOverlay.classList.remove('hidden'); 
-                authOverlay.setAttribute('aria-hidden', 'false');
-            }, 10);
         }
     };
 
     checkSession();
 
-    showSignupBtn.addEventListener('click', () => {
-        loginBox.classList.add('hidden');
-        loginBox.setAttribute('aria-hidden', 'true');
-        signupBox.classList.remove('hidden');
-        signupBox.setAttribute('aria-hidden', 'false');
-        loginError.textContent = '';
-    });
+    // Admin Access Modal Button
+    const adminAccessBtn = document.getElementById('adminAccessBtn');
+    if(adminAccessBtn) {
+        adminAccessBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            authOverlay.style.display = 'flex';
+            setTimeout(() => { 
+                authOverlay.classList.remove('hidden'); 
+                authOverlay.setAttribute('aria-hidden', 'false');
+            }, 10);
+        });
+    }
 
-    showLoginBtn.addEventListener('click', () => {
-        signupBox.classList.add('hidden');
-        signupBox.setAttribute('aria-hidden', 'true');
-        loginBox.classList.remove('hidden');
-        loginBox.setAttribute('aria-hidden', 'false');
-        signupError.textContent = '';
-    });
-
-    signupForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const user = document.getElementById('signupUser').value.trim();
-        const email = document.getElementById('signupEmail').value.trim();
-        const pass = document.getElementById('signupPass').value;
-
-        if (!passwordRegex.test(pass)) {
-            signupError.textContent = 'Password does not meet requirements.';
-            return;
-        }
-
-        try {
-            const response = await fetch('/api/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: user, email, password: pass })
-            });
-            const result = await response.json();
-            
-            if (result.success) {
-                sessionStorage.setItem('isLoggedIn', 'true');
-                sessionStorage.setItem('currentUser', user);
-                checkSession();
-            } else {
-                signupError.textContent = result.message;
-            }
-        } catch (error) {
-            signupError.textContent = 'Error connecting to server.';
-        }
-    });
+    const closeAuthBtn = document.getElementById('closeAuth');
+    if(closeAuthBtn) {
+        closeAuthBtn.addEventListener('click', () => {
+            authOverlay.classList.add('hidden');
+            authOverlay.setAttribute('aria-hidden', 'true');
+            setTimeout(() => { authOverlay.style.display = 'none'; }, 500);
+        });
+    }
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -216,9 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Reset forms
         loginForm.reset();
-        signupForm.reset();
         loginError.textContent = '';
-        signupError.textContent = '';
         
         // Ensure side menu closes
         sidePanel.classList.remove('open');
