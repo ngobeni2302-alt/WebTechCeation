@@ -693,7 +693,9 @@ h2::after {
   display: flex;
   align-items: center;
   -webkit-tap-highlight-color: transparent;
-  font-size: 5px; /* Resize relative to navbar */
+  font-size: 5px;
+  transform: scale(0.125);
+  transform-origin: center right;
   cursor: pointer;
 }
 
