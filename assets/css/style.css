@@ -5,8 +5,8 @@
     --border-subtle: #333333;
     --text-main: #FFFFFF;
     --text-muted: #AAAAAA;
-    --accent-highlight: #FF9800; 
-    --accent-glow: rgba(255, 152, 0, 0.1);
+    --accent-highlight: #32CD32; 
+    --accent-glow: rgba(50, 205, 50, 0.1);
     
     --nav-bg: rgba(0, 0, 0, 0.85);
     --overlay-bg: rgba(0, 0, 0, 0.7);
@@ -25,8 +25,8 @@
     --border-subtle: #CCCCCC;
     --text-main: #000000;
     --text-muted: #555555;
-    --accent-highlight: #FF9800;
-    --accent-glow: rgba(255, 152, 0, 0.2);
+    --accent-highlight: #32CD32;
+    --accent-glow: rgba(50, 205, 50, 0.2);
     
     --nav-bg: rgba(255, 255, 255, 0.85);
     --overlay-bg: rgba(0, 0, 0, 0.3);
@@ -600,7 +600,8 @@ h2::after {
 .text-card .card-content {
     opacity: 0;
     max-height: 0;
-    transition: all 0.4s ease;
+    margin-bottom: 0;
+    transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), margin-bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
 }
 
@@ -638,8 +639,8 @@ h2::after {
 
 .text-card:hover .card-content {
     opacity: 1;
-    max-height: 150px; /* Expands to reveal */
-    margin-bottom: 2rem;
+    max-height: 180px; /* Fully expands to reveal smoothly without clashing */
+    margin-bottom: 1.5rem;
 }
 
 .text-card:hover .arrow-container {
