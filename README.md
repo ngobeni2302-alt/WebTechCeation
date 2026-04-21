@@ -1,43 +1,61 @@
-# Website Creation HUB
+# WEBHub Premium Web Design
 
-This repository contains a web application built with HTML, CSS, and JavaScript.
+A premium, dark navy-themed web experience built with highly modern modular code structure. 
 
-## How to Run the App
+## 🚀 Features
 
-Because this application uses a custom Python backend with a SQLite database for secure user authentication (Login/Signup), you **must** run the provided custom server. 
+- **Responsive Design**: Flawlessly adapts to desktop, tablet, and mobile viewing.
+- **Theme Toggling**: Uiverse animated theme toggle for switching between dark and light modes.
+- **Modular JavaScript**: Clean, ES-Module architecture avoiding monolithic scripts.
+- **Performance Optimized**: No external node modules needed for deployment. Just static files with lightweight Python backend for Auth!
 
-Do **not** use the default static `python -m http.server`, as it will not process the `/api/signup` or `/api/login` backend handlers!
+## 📂 Project Structure
 
-**Follow these exact steps:**
+We value clean and manageable code, dividing our resources so they are easy to navigate and extend.
 
-1. Open your terminal.
-2. Navigate to the project root directory.
-3. Start the backend server by running:
-   ```bash
-   python backend/server.py
-   ```
-   *(Note: Depending on your system configuration, you may need to use `python3` instead of `python`)*
-4. The server will initialize your `users.db` SQLite database automatically if it doesn't exist yet.
-5. Open your web browser and go to: `http://localhost:8080`
+```
+WebTechCeation/
+├── index.html               # Main entry point for the frontend
+├── README.md                # Project documentation
+├── backend/                 # Backend APIs and Server Logic
+│   ├── server.py            # Python server and SQLite database handler
+│   └── users.db             # SQLite database for admin access
+├── src/                     # Source files
+│   └── scss/                # SCSS partials (variables, components, layout)
+└── assets/                  # Public web assets served to the client
+    ├── css/
+    │   └── main.css         # Main stylesheet 
+    ├── js/
+    │   ├── main.js          # Main ES Module entry
+    │   ├── auth.js          # Authentication logic
+    │   ├── nav.js           # Navigation logic and smooth scroll
+    │   ├── theme.js         # Theme toggle logic
+    │   └── ui.js            # UI Modals and Animations
+    └── images/              # Image assets
+```
 
-*(If you were previously using `open_web.sh`, you will now find it inside the `/scripts/` directory. Make sure it points to `python backend/server.py` if you prefer using it).*
+## 🛠 Getting Started
 
-## What Do We Offer!?
+### 1. Running the Server
 
-We specialize in crafting beautiful and functional websites tailored to your specific needs. Check out some of our offerings:
+Since this project utilizes ES Modules (`<script type="module">`), you **must** serve it using a local web server to avoid CORS issues.
 
-### Birthday Websites
-Celebrate life's milestones with vibrant and joyful designs!
-![Birthday Website](assets/images/birthday_website_preview_1775633285058.png)
+Fortunately, we have a custom Python backend that handles this for you:
 
-### Love & Anniversary Websites
-Immortalize your precious moments with an elegant aesthetic!
-![Love Website](assets/images/love_website_preview_1775633355080.png)
+```bash
+cd backend
+python server.py
+```
+*Note: Make sure to run `server.py` from the root directory if you want it to serve the `index.html` from the root, or adjust the path in the python file.*
 
-### Business Websites
-Establish a strong and professional corporate presence!
-![Business Website](assets/images/business_website_preview_1775633462836.png)
+To run from the root directory:
+```bash
+python backend/server.py
+```
 
-### And More! (E.g. Portfolios)
-Sleek, modern, and dark-mode designs perfect for showcasing your creative work! Dream It And We'll Make It Come True!
-![Portfolio Website](assets/images/portfolio_website_preview_1775633502924.png)
+### 2. SCSS to CSS 
+
+If you wish to modify the styles, we highly recommend modifying the SCSS files in the `src/scss/` directory. You can use any simple compiler like the **Live Sass Compiler** extension in VSCode to output to `assets/css/main.css`. No complex `node_modules` or build chains are required!
+
+---
+> Created by TechMINDS for the People.
