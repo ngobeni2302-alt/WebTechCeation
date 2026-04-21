@@ -694,7 +694,7 @@ h2::after {
   align-items: center;
   -webkit-tap-highlight-color: transparent;
   font-size: 5px;
-  transform: scale(0.125);
+  transform: scale(0.375);
   transform-origin: center right;
   cursor: pointer;
 }
