@@ -8,11 +8,11 @@ echo "------------------------------------------------"
 echo "  WEBHub Premium: Launching Web Experience...  "
 echo "------------------------------------------------"
 
-# Change to the directory where this script is located
-cd "$DIRECTORY"
+# Change to the project root directory where this script is located
+cd "$DIRECTORY/.."
 
 # Start the Custom Auth Server in the background
-(python3 server.py > /dev/null 2>&1 &)
+(python3 backend/server.py > /dev/null 2>&1 &)
 
 # Wait a second for the server to start
 sleep 1

@@ -25,9 +25,26 @@ def init_db():
 
 init_db()
 
-def hash_password(password):
-    # Securely store passwords using SHA-256
-    return hashlib.sha256(password.encode('utf-8')).hexdigest()
+def hash_password(password, salt=None):
+    if salt is None:
+        salt = os.urandom(16)
+    elif isinstance(salt, str):
+        salt = bytes.fromhex(salt)
+    
+    key = hashlib.pbkdf2_hmac(
+        'sha256', 
+        password.encode('utf-8'), 
+        salt, 
+        100000,
+        dklen=32
+    )
+    return f"{salt.hex()}:{key.hex()}"
+
+def verify_password(stored_password_hash, provided_password):
+    if ':' not in stored_password_hash:
+        return hashlib.sha256(provided_password.encode('utf-8')).hexdigest() == stored_password_hash
+    salt_hex = stored_password_hash.split(':')[0]
+    return hash_password(provided_password, salt_hex) == stored_password_hash
 
 class AuthHandler(http.server.SimpleHTTPRequestHandler):
     def do_POST(self):
@@ -89,8 +106,6 @@ class AuthHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_response_json({"success": False, "message": "Missing credentials"}, 400)
                 return
 
-            password_hash = hash_password(password)
-
             conn = sqlite3.connect(DB_FILE)
             cursor = conn.cursor()
             
@@ -99,7 +114,7 @@ class AuthHandler(http.server.SimpleHTTPRequestHandler):
             user = cursor.fetchone()
             conn.close()
 
-            if user and user[1] == password_hash:
+            if user and verify_password(user[1], password):
                 self.send_response_json({"success": True, "username": user[0]})
             else:
                 self.send_response_json({"success": False, "message": "Invalid credentials"}, 401)
