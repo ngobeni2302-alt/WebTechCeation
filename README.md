@@ -40,18 +40,18 @@ WebTechCeation/
 
 Since this project utilizes ES Modules (`<script type="module">`), you **must** serve it using a local web server to avoid CORS issues.
 
-Fortunately, we have a custom Python backend that handles this for you:
+Fortunately, we provide a convenient script to start the server and automatically open the application in your default web browser. Run the following command from the root directory:
 
 ```bash
-cd backend
-python server.py
+bash scripts/open_web.sh
 ```
-*Note: Make sure to run `server.py` from the root directory if you want it to serve the `index.html` from the root, or adjust the path in the python file.*
 
-To run from the root directory:
+Alternatively, you can manually start the custom Python backend from the root directory:
+
 ```bash
-python backend/server.py
+python3 backend/server.py
 ```
+*(After starting it manually, you will need to open `http://localhost:8080` in your web browser.)*
 
 ### 2. SCSS to CSS 
 
