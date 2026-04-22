@@ -577,14 +577,14 @@ h2::after {
 /* Text Card Base */
 .text-card {
     background: var(--base-dark);
-    padding: 2rem;
+    padding: 2.5rem 2rem;
     border-radius: 12px;
     border: 1px solid var(--border-subtle);
-    border-top: 4px solid transparent; 
+    border-top: 4px solid var(--accent-highlight); 
     position: relative;
     display: flex;
     flex-direction: column;
-    min-height: 250px;
+    min-height: 280px;
     transition: var(--transition);
     overflow: hidden;
 }
@@ -594,20 +594,21 @@ h2::after {
     font-size: 1.25rem;
     color: var(--text-main);
     transition: var(--transition);
+    transform-origin: left center;
 }
 
 /* Hidden Content */
 .text-card .card-content {
-    opacity: 0;
-    max-height: 0;
-    margin-bottom: 0;
-    transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), margin-bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
+    opacity: 1;
+    margin-bottom: 1.5rem;
+    transition: var(--transition);
 }
 
 .text-card p {
     color: var(--text-muted);
     font-size: 0.95rem;
+    transition: var(--transition);
+    transform-origin: left center;
 }
 
 /* Arrow Container Default */
@@ -632,23 +633,28 @@ h2::after {
 
 /* Text Card Hover States */
 .text-card:hover {
-    border-top: 4px solid var(--accent-highlight);
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    background: var(--base-light);
 }
 
-.text-card:hover .card-content {
-    opacity: 1;
-    max-height: 180px; /* Fully expands to reveal smoothly without clashing */
-    margin-bottom: 1.5rem;
+.text-card:hover h3 {
+    transform: scale(1.1);
+    color: var(--accent-highlight);
+    text-shadow: 0 0 10px var(--accent-glow);
+}
+
+.text-card:hover p {
+    transform: scale(1.05);
 }
 
 .text-card:hover .arrow-container {
     background: var(--accent-highlight);
-    color: #000000; /* Black arrow */
+    color: #000000;
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    transform: translateX(10px);
 }
 
 /* Team Card */
