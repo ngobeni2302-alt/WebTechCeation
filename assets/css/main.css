@@ -490,10 +490,7 @@ h2::after {
     color: var(--accent-highlight);
 }
 
-/* Optional: change eye to 'eye-off' when visible */
-.password-toggle.visible svg {
-    /* You could swap the SVG path here or just change color */
-}
+
 
 .auth-switch {
     margin-top: 1.5rem;

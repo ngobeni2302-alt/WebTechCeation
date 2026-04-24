@@ -12,7 +12,22 @@ echo "------------------------------------------------"
 cd "$DIRECTORY/.."
 
 # Start the Custom Auth Server in the background
-(python3 backend/server.py > /dev/null 2>&1 &)
+PYTHON_BIN="python3"
+if [ -f ".venv/bin/python3" ]; then
+    PYTHON_BIN=".venv/bin/python3"
+elif [ -f "venv/bin/python3" ]; then
+    PYTHON_BIN="venv/bin/python3"
+fi
+
+# Check for required dependencies
+if ! $PYTHON_BIN -c "import dotenv, jwt" > /dev/null 2>&1; then
+    echo "ERROR: Missing required Python dependencies (python-dotenv, PyJWT)."
+    echo "Please run: $PYTHON_BIN -m pip install python-dotenv PyJWT"
+    exit 1
+fi
+
+$PYTHON_BIN backend/server.py > /dev/null 2>&1 &
+SERVER_PID=$!
 
 # Wait a second for the server to start
 sleep 1
@@ -33,9 +48,9 @@ else
     echo "Could not find a command to open the browser. Please visit: $URL"
 fi
 
-echo "The server is running at $URL (PID: $!)"
+echo "The server is running at $URL (PID: $SERVER_PID)"
 echo "Press Ctrl+C in this terminal when you want to stop the website."
 
 # Trap Ctrl+C to kill the background process on exit
-trap "kill $!; exit" INT
+trap "kill $SERVER_PID; exit" INT
 wait

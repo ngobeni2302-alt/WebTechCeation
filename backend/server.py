@@ -1,29 +1,25 @@
 import http.server
 import json
 import os
-import sqlite3
 import hashlib
+import jwt
+import datetime
+from database import SessionLocal, engine
+from models import User, Base
 
 PORT = 8080
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_FILE = os.path.join(BASE_DIR, "users.db")
+SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
-# Part 2: Database Modernization (SQLite)
-def init_db():
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL
-        )
-    ''')
-    conn.commit()
-    conn.close()
+# Initialize database tables
+Base.metadata.create_all(bind=engine)
 
-init_db()
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
 def hash_password(password, salt=None):
     if salt is None:
@@ -73,25 +69,23 @@ class AuthHandler(http.server.SimpleHTTPRequestHandler):
 
             password_hash = hash_password(password)
 
-            conn = sqlite3.connect(DB_FILE)
-            cursor = conn.cursor()
-            
+            db = SessionLocal()
             try:
-                # Use parameterization (?) to prevent SQL injection
-                cursor.execute("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", 
-                             (username, email, password_hash))
-                conn.commit()
+                new_user = User(username=username, email=email, password_hash=password_hash)
+                db.add(new_user)
+                db.commit()
                 self.send_response_json({"success": True, "message": "User created successfully"})
-            except sqlite3.IntegrityError as e:
-                # Since we have UNIQUE constraints, IntegrityError spots duplicates
-                if 'username' in str(e).lower() or 'users.username' in str(e).lower():
+            except Exception as e:
+                db.rollback()
+                error_msg = str(e).lower()
+                if 'username' in error_msg:
                     self.send_response_json({"success": False, "message": "Username already exists"}, 400)
-                elif 'email' in str(e).lower() or 'users.email' in str(e).lower():
+                elif 'email' in error_msg:
                     self.send_response_json({"success": False, "message": "Email already exists"}, 400)
                 else:
                     self.send_response_json({"success": False, "message": "Database error"}, 500)
             finally:
-                conn.close()
+                db.close()
                 
         except Exception as e:
             self.send_response_json({"success": False, "message": str(e)}, 500)
@@ -106,16 +100,17 @@ class AuthHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_response_json({"success": False, "message": "Missing credentials"}, 400)
                 return
 
-            conn = sqlite3.connect(DB_FILE)
-            cursor = conn.cursor()
-            
-            # Check by username or email using standard SQL
-            cursor.execute("SELECT username, password_hash FROM users WHERE username = ? OR email = ?", (ident, ident))
-            user = cursor.fetchone()
-            conn.close()
+            db = SessionLocal()
+            user = db.query(User).filter((User.username == ident) | (User.email == ident)).first()
+            db.close()
 
-            if user and verify_password(user[1], password):
-                self.send_response_json({"success": True, "username": user[0]})
+            if user and verify_password(user.password_hash, password):
+                token = create_access_token({"sub": user.username})
+                self.send_response_json({
+                    "success": True, 
+                    "username": user.username,
+                    "token": token
+                })
             else:
                 self.send_response_json({"success": False, "message": "Invalid credentials"}, 401)
                 
