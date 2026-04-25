@@ -11,12 +11,21 @@ echo "------------------------------------------------"
 # Change to the project root directory where this script is located
 cd "$DIRECTORY/.."
 
-# Start the Custom Auth Server in the background
-(python3 backend/server.py > /dev/null 2>&1 &)
+# Setup and Start the FastAPI Server in the background
+echo "Setting up FastAPI backend..."
+cd backend
+if [ ! -d "venv" ]; then
+    python3 -m venv venv
+fi
+source venv/bin/activate
+pip install -r requirements.txt > /dev/null 2>&1
+(uvicorn main:app --port 8000 > /dev/null 2>&1 &)
+cd ..
 
 # Wait a second for the server to start
-sleep 1
+sleep 2
 
+PORT=8000
 # Get the URL
 URL="http://localhost:$PORT"
 
