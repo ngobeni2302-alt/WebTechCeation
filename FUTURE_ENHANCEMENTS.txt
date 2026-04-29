@@ -1,10 +1,10 @@
 =============================================================================
-                  WEBHub Premium - Future Enhancements Guide
+                  TechMINDS - Future Enhancements Guide
 =============================================================================
 
 This document outlines the "missing technologies" and architectural patterns 
 that are typically found in enterprise-grade applications, along with specific 
-recommendations on how to enhance the WEBHub Premium project as it grows.
+recommendations on how to enhance the TechMINDS project as it grows.
 
 =============================================================================
 1. MISSING TECHNOLOGIES (What could be added)
@@ -25,10 +25,6 @@ FRONTEND:
   design consistency across the platform.
 
 BACKEND:
-- Modern Web Framework (e.g., FastAPI, Flask, Django): The project currently uses 
-  Python's built-in `http.server`. Moving to a framework like FastAPI would 
-  provide automatic API documentation (Swagger), faster asynchronous request 
-  handling, and built-in data validation (Pydantic).
 - Database Migrations (e.g., Alembic): Currently, `init_db.py` creates tables 
   from scratch. A migration tool would allow you to alter the database schema 
   (like adding a new column) without losing existing user data.
@@ -50,12 +46,8 @@ DEVOPS & HOSTING:
 =============================================================================
 
 SECURITY ENHANCEMENTS:
-- Implement Rate Limiting: Prevent brute-force attacks on the `/api/login` 
-  route by limiting how many times an IP address can try to log in per minute.
 - CSRF Protection: Add Cross-Site Request Forgery tokens to forms to ensure 
   malicious sites cannot submit requests on behalf of an authenticated user.
-- Secure Cookies: Instead of storing the login state simply in `sessionStorage`, 
-  switch to HTTP-Only, Secure cookies for storing JWTs to prevent XSS attacks.
 
 PERFORMANCE ENHANCEMENTS:
 - Asset Optimization: Compress images to WebP format and implement "lazy loading" 

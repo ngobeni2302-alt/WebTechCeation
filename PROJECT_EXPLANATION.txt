@@ -1,8 +1,8 @@
 =============================================================================
-                          WEBHub Premium - Project Explanation
+                          TechMINDS - Project Explanation
 =============================================================================
 
-This document provides a comprehensive overview of the WEBHub Premium project, 
+This document provides a comprehensive overview of the TechMINDS project, 
 explaining the technologies used, how they work together, and a file-by-file 
 breakdown of the codebase.
 
@@ -19,10 +19,12 @@ FRONTEND TECHNOLOGIES:
 
 BACKEND TECHNOLOGIES:
 - Python 3: The core programming language for the backend server.
-- http.server (Python Standard Library): A built-in Python module used to serve static files and handle custom API routing.
+- FastAPI: A modern, fast (high-performance) web framework for building APIs with Python 3 based on standard Python type hints.
 - SQLAlchemy: An Object Relational Mapper (ORM) for Python. It allows the Python code to interact with the database using Python objects instead of raw SQL queries.
 - SQLite: A lightweight, serverless database engine used to store data locally in a single file (`users.db`).
 - PyJWT: A library used to generate and verify JSON Web Tokens (JWTs) for secure user authentication.
+- SlowAPI: Used for rate-limiting API endpoints to prevent brute-force attacks.
+- Pydantic: Data validation and settings management using Python type annotations.
 - python-dotenv: Used to load environment variables from the `.env` file securely.
 
 =============================================================================
@@ -32,7 +34,7 @@ BACKEND TECHNOLOGIES:
 The architecture of this project is a "Single Page Application (SPA)" style frontend connected to a "RESTful API" backend.
 
 1. The Web Server: 
-When you run the server, Python uses the `http.server` library to listen for incoming network requests on port 8080. 
+When you run the server, the application uses FastAPI to listen for incoming network requests on port 8080. 
 
 2. Serving the Frontend:
 If you request the homepage (`http://localhost:8080`), the Python server reads `index.html` and sends it to the browser. The browser then requests the linked CSS and JavaScript files. 
@@ -42,7 +44,7 @@ The frontend JavaScript is broken into smaller modules (`auth.js`, `theme.js`, e
 
 4. API Communication & Authentication:
 When a user attempts to log in via the Admin Modal, `auth.js` intercepts the form submission and uses the JavaScript `fetch()` API to send a POST request with the credentials to `/api/login`.
-The Python server receives this request, parses the JSON payload, and queries the SQLite database using SQLAlchemy. If the credentials match, Python uses PyJWT to create an encrypted token and sends a success response. The frontend then stores login state in `sessionStorage` and updates the UI. 
+The Python server receives this request, parses the JSON payload using Pydantic, and queries the SQLite database using SQLAlchemy. If the credentials match, Python uses PyJWT to create an encrypted token and sends a success response. The backend also sets an HTTP-only, secure cookie containing the access token to prevent XSS attacks. The frontend updates the UI based on the success response. 
 
 5. Error Handling:
 If the API request fails (e.g., incorrect password, server crash), the server responds with specific HTTP status codes (like 401 Unauthorized or 500 Server Error). The frontend's `errorHandler.js` intercepts these codes and triggers the appropriate UI response (e.g., highlighting input boxes in red or showing a "Session Expired" alert).
@@ -66,7 +68,7 @@ If the API request fails (e.g., incorrect password, server crash), the server re
 
 --- BACKEND DIRECTORY (`/backend/`) ---
 - `server.py`
-  The core server file. It creates a custom HTTP request handler that serves static files (HTML, CSS, JS) and intercepts specific routes (like `/api/login`) to handle backend business logic.
+  The core server file. It creates a FastAPI application that serves static files (HTML, CSS, JS) and defines specific routes (like `/api/login` and `/api/signup`) with built-in rate limiting and data validation to handle backend business logic.
 
 - `database.py`
   Handles the configuration and connection to the SQLite database. It initializes the SQLAlchemy engine and creates a session maker so the server can talk to the database.
