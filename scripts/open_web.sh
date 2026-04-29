@@ -20,13 +20,13 @@ elif [ -f "venv/bin/python3" ]; then
 fi
 
 # Check for required dependencies
-if ! $PYTHON_BIN -c "import dotenv, jwt" > /dev/null 2>&1; then
-    echo "ERROR: Missing required Python dependencies (python-dotenv, PyJWT)."
-    echo "Please run: $PYTHON_BIN -m pip install python-dotenv PyJWT"
+if ! $PYTHON_BIN -c "import dotenv, jwt, fastapi, uvicorn, slowapi" > /dev/null 2>&1; then
+    echo "ERROR: Missing required Python dependencies (python-dotenv, PyJWT, fastapi, uvicorn, slowapi)."
+    echo "Please run: $PYTHON_BIN -m pip install python-dotenv PyJWT fastapi uvicorn slowapi"
     exit 1
 fi
 
-$PYTHON_BIN backend/server.py > /dev/null 2>&1 &
+$PYTHON_BIN -m uvicorn backend.server:app --host 0.0.0.0 --port $PORT --reload > /dev/null 2>&1 &
 SERVER_PID=$!
 
 # Wait a second for the server to start

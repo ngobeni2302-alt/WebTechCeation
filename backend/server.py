@@ -1,17 +1,21 @@
-import http.server
-import json
+from fastapi import FastAPI, HTTPException, Response, Request, Depends
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 import os
 import hashlib
 import jwt
 import datetime
-from database import SessionLocal, engine
-from models import User, Base
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from .database import SessionLocal, engine
+from .models import User, Base
 
 PORT = 8080
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
-# Initialize database tables
 Base.metadata.create_all(bind=engine)
 
 def create_access_token(data: dict):
@@ -42,86 +46,81 @@ def verify_password(stored_password_hash, provided_password):
     salt_hex = stored_password_hash.split(':')[0]
     return hash_password(provided_password, salt_hex) == stored_password_hash
 
-class AuthHandler(http.server.SimpleHTTPRequestHandler):
-    def do_POST(self):
-        if self.path == '/api/signup':
-            self.handle_signup()
-        elif self.path == '/api/login':
-            self.handle_login()
+# Pydantic models
+class LoginRequest(BaseModel):
+    ident: str
+    password: str
+
+class SignupRequest(BaseModel):
+    username: str
+    email: str
+    password: str
+
+limiter = Limiter(key_func=get_remote_address)
+app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Dependency to get DB session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@app.post("/api/signup")
+def signup(req: SignupRequest, db: SessionLocal = Depends(get_db)):
+    password_hash = hash_password(req.password)
+    try:
+        new_user = User(username=req.username, email=req.email, password_hash=password_hash)
+        db.add(new_user)
+        db.commit()
+        return {"success": True, "message": "User created successfully"}
+    except Exception as e:
+        db.rollback()
+        error_msg = str(e).lower()
+        if 'username' in error_msg:
+            return JSONResponse(status_code=400, content={"success": False, "message": "Username already exists"})
+        elif 'email' in error_msg:
+            return JSONResponse(status_code=400, content={"success": False, "message": "Email already exists"})
         else:
-            self.send_error(404, "Not Found")
+            return JSONResponse(status_code=500, content={"success": False, "message": "Database error"})
 
-    def get_post_data(self):
-        content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        return json.loads(post_data.decode('utf-8'))
+@app.post("/api/login")
+@limiter.limit("5/minute")
+def login(request: Request, req: LoginRequest, response: Response, db: SessionLocal = Depends(get_db)):
+    user = db.query(User).filter((User.username == req.ident) | (User.email == req.ident)).first()
+    
+    if user and verify_password(user.password_hash, req.password):
+        token = create_access_token({"sub": user.username})
+        
+        # Set HttpOnly cookie
+        response.set_cookie(
+            key="access_token",
+            value=token,
+            httponly=True,
+            secure=True,
+            samesite="lax",
+            max_age=1800 # 30 minutes
+        )
+        
+        return {"success": True, "username": user.username}
+    else:
+        return JSONResponse(status_code=401, content={"success": False, "message": "Invalid credentials"})
 
-    def handle_signup(self):
-        try:
-            data = self.get_post_data()
-            username = data.get('username')
-            email = data.get('email')
-            password = data.get('password')
+# Mount static files
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")
+app.mount("/src", StaticFiles(directory="src"), name="src")
 
-            if not username or not email or not password:
-                self.send_response_json({"success": False, "message": "Missing required fields"}, 400)
-                return
+@app.get("/")
+def read_index():
+    return FileResponse("index.html")
 
-            password_hash = hash_password(password)
+@app.get("/robots.txt")
+def read_robots():
+    return FileResponse("robots.txt")
 
-            db = SessionLocal()
-            try:
-                new_user = User(username=username, email=email, password_hash=password_hash)
-                db.add(new_user)
-                db.commit()
-                self.send_response_json({"success": True, "message": "User created successfully"})
-            except Exception as e:
-                db.rollback()
-                error_msg = str(e).lower()
-                if 'username' in error_msg:
-                    self.send_response_json({"success": False, "message": "Username already exists"}, 400)
-                elif 'email' in error_msg:
-                    self.send_response_json({"success": False, "message": "Email already exists"}, 400)
-                else:
-                    self.send_response_json({"success": False, "message": "Database error"}, 500)
-            finally:
-                db.close()
-                
-        except Exception as e:
-            self.send_response_json({"success": False, "message": str(e)}, 500)
-
-    def handle_login(self):
-        try:
-            data = self.get_post_data()
-            ident = data.get('ident')
-            password = data.get('password')
-
-            if not ident or not password:
-                self.send_response_json({"success": False, "message": "Missing credentials"}, 400)
-                return
-
-            db = SessionLocal()
-            user = db.query(User).filter((User.username == ident) | (User.email == ident)).first()
-            db.close()
-
-            if user and verify_password(user.password_hash, password):
-                token = create_access_token({"sub": user.username})
-                self.send_response_json({
-                    "success": True, 
-                    "username": user.username,
-                    "token": token
-                })
-            else:
-                self.send_response_json({"success": False, "message": "Invalid credentials"}, 401)
-                
-        except Exception as e:
-            self.send_response_json({"success": False, "message": str(e)}, 500)
-
-    def send_response_json(self, data, status=200):
-        self.send_response(status)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        self.wfile.write(json.dumps(data).encode('utf-8'))
-
-print(f"Starting server on port {PORT}...")
-http.server.HTTPServer(('', PORT), AuthHandler).serve_forever()
+@app.get("/sitemap.xml")
+def read_sitemap():
+    return FileResponse("sitemap.xml")

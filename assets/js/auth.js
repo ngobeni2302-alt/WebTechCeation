@@ -1,3 +1,5 @@
+import { handleApiError } from './errorHandler.js';
+
 export function initAuth() {
     const authOverlay = document.getElementById('authOverlay');
     const loginBox = document.getElementById('loginBox');
@@ -52,19 +54,26 @@ export function initAuth() {
                     const response = await fetch('/api/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
                         body: JSON.stringify({ ident, password: pass })
                     });
-                    const result = await response.json();
                     
-                    if (result.success) {
-                        sessionStorage.setItem('isLoggedIn', 'true');
-                        sessionStorage.setItem('currentUser', result.username);
-                        checkSession();
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.success) {
+                            sessionStorage.setItem('isLoggedIn', 'true');
+                            sessionStorage.setItem('currentUser', result.username);
+                            checkSession();
+                        } else {
+                            loginError.textContent = result.message;
+                        }
                     } else {
-                        loginError.textContent = result.message;
+                        let errorData = null;
+                        try { errorData = await response.json(); } catch(e) {}
+                        handleApiError(response, errorData, loginForm);
                     }
                 } catch (error) {
-                    loginError.textContent = 'Error connecting to server.';
+                    handleApiError(null, null, loginForm);
                 }
             });
         }
