@@ -1,6 +1,6 @@
-# WEBHub Premium Web Design
+# Ntsako
 
-A premium, dark navy-themed web experience built with highly modern modular code structure. 
+A premium, dark navy-themed web experience built with highly modern modular code structure, powered by a secure FastAPI backend. 
 
 ## 🚀 Features
 
@@ -18,8 +18,9 @@ WebTechCeation/
 ├── index.html               # Main entry point for the frontend
 ├── README.md                # Project documentation
 ├── backend/                 # Backend APIs and Server Logic
-│   ├── server.py            # Python server and SQLite database handler
-│   └── users.db             # SQLite database for admin access
+│   ├── main.py              # FastAPI server, JWT auth, and routing
+│   ├── requirements.txt     # Python dependencies
+│   └── users.db             # SQLite database
 ├── src/                     # Source files
 │   └── scss/                # SCSS partials (variables, components, layout)
 └── assets/                  # Public web assets served to the client
@@ -46,12 +47,23 @@ Fortunately, we provide a convenient script to start the server and automaticall
 bash scripts/open_web.sh
 ```
 
-Alternatively, you can manually start the custom Python backend from the root directory:
+Alternatively, you can manually start the FastAPI backend from the `backend` directory. First install the requirements:
 
 ```bash
-python3 backend/server.py
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload
 ```
-*(After starting it manually, you will need to open `http://localhost:8080` in your web browser.)*
+*(After starting it, the API will be available at `http://localhost:8000`. You can test endpoints via the Swagger UI at `http://localhost:8000/docs`.)*
+
+## 🚀 Backend Architecture Upgrade (FastAPI)
+
+- **FastAPI Framework**: Migrated from a basic `http.server` to FastAPI for automatic Pydantic validation and asynchronous request handling.
+- **Secure Authentication**: Replaced basic JSON payload login with an OAuth2-compliant form data submission.
+- **JWT Protection**: Integrated a `get_current_user` dependency to ensure protected routes (like `/bookings` and `/bookings/me`) are securely locked with JSON Web Tokens.
+- **Frontend Sync**: The frontend `auth.js` automatically handles token storage in `sessionStorage` and attaches it to authenticated requests.
 
 ### 2. SCSS to CSS 
 

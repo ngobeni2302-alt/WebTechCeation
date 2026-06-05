@@ -49,19 +49,26 @@ export function initAuth() {
                 const pass = document.getElementById('loginPass').value;
 
                 try {
+                    // Using URLSearchParams to send data as application/x-www-form-urlencoded
+                    // which is required by FastAPI's OAuth2PasswordRequestForm
+                    const params = new URLSearchParams();
+                    params.append('username', ident);
+                    params.append('password', pass);
+
                     const response = await fetch('/api/login', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ ident, password: pass })
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: params
                     });
                     const result = await response.json();
                     
-                    if (result.success) {
+                    if (response.ok && result.success) {
                         sessionStorage.setItem('isLoggedIn', 'true');
                         sessionStorage.setItem('currentUser', result.username);
+                        sessionStorage.setItem('token', result.access_token); // Store the JWT
                         checkSession();
                     } else {
-                        loginError.textContent = result.message;
+                        loginError.textContent = result.detail || result.message || 'Login failed';
                     }
                 } catch (error) {
                     loginError.textContent = 'Error connecting to server.';
@@ -74,6 +81,7 @@ export function initAuth() {
         logoutBtn.addEventListener('click', () => {
             sessionStorage.removeItem('isLoggedIn');
             sessionStorage.removeItem('currentUser');
+            sessionStorage.removeItem('token');
             checkSession();
             
             // Reset forms
