@@ -23,12 +23,15 @@ export function initUI() {
     const closeModal = document.getElementById('closeModal');
 
     if(imageModal && modalImage && closeModal) {
-        document.querySelectorAll('.clickable-image').forEach(img => {
-            img.addEventListener('click', () => {
+        document.addEventListener('click', (event) => {
+            const img = event.target.closest('.clickable-image');
+
+            if (img) {
                 imageModal.classList.add('visible');
                 imageModal.setAttribute('aria-hidden', 'false');
                 modalImage.src = img.src;
-            });
+                modalImage.alt = img.alt;
+            }
         });
 
         closeModal.addEventListener('click', () => {

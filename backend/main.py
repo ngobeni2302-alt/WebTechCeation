@@ -32,6 +32,14 @@ app.mount("/src", StaticFiles(directory=os.path.join(PROJECT_ROOT, "src")), name
 async def serve_index():
     return FileResponse(os.path.join(PROJECT_ROOT, "index.html"))
 
+@app.get("/index.html")
+async def serve_index_html():
+    return FileResponse(os.path.join(PROJECT_ROOT, "index.html"))
+
+@app.get("/offer.html")
+async def serve_offer():
+    return FileResponse(os.path.join(PROJECT_ROOT, "offer.html"))
+
 # Configuration
 SECRET_KEY = "your-ultra-secure-secret" # In production, use env variable
 ALGORITHM = "HS256"
