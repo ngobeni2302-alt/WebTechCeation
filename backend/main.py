@@ -67,6 +67,13 @@ class BookingRequest(BaseModel):
     service_id: int
     appointment_time: datetime
 
+class QuoteRequest(BaseModel):
+    project_type: str
+    due_date: str
+    description: str
+    email: str
+    phone: str
+
 # --- Database Utils ---
 def get_db_connection():
     conn = sqlite3.connect(DB_FILE)
@@ -92,6 +99,17 @@ def init_db():
             service_id INTEGER NOT NULL,
             appointment_time DATETIME NOT NULL,
             FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS quotes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            project_type TEXT NOT NULL,
+            due_date TEXT NOT NULL,
+            description TEXT NOT NULL,
+            email TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     ''')
     conn.commit()
@@ -231,3 +249,19 @@ async def get_my_bookings(current_user: dict = Depends(get_current_user)):
     conn.close()
     
     return {"bookings": [dict(b) for b in bookings]}
+
+@app.post("/api/quotes", status_code=status.HTTP_201_CREATED)
+async def create_quote(quote: QuoteRequest):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "INSERT INTO quotes (project_type, due_date, description, email, phone) VALUES (?, ?, ?, ?, ?)",
+            (quote.project_type, quote.due_date, quote.description, quote.email, quote.phone)
+        )
+        conn.commit()
+        return {"success": True, "message": "Quote request submitted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
