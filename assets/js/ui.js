@@ -47,6 +47,64 @@ export function initUI() {
         });
     }
 
+    // Get A Quote Form Logic
+    const quoteForm = document.getElementById('quoteForm');
+    const quoteSuccess = document.getElementById('quoteSuccessMessage');
+    const projectTypeInput = document.getElementById('projectTypeInput');
+    const optionCards = document.querySelectorAll('.quote-option-card');
+
+    if (quoteForm && quoteSuccess && projectTypeInput && optionCards.length > 0) {
+        optionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                optionCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                projectTypeInput.value = card.getAttribute('data-value');
+            });
+        });
+
+        quoteForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const projectType = projectTypeInput.value;
+            const dueDate = document.getElementById('dueDate').value;
+            const description = document.getElementById('dreamDescription').value;
+            const email = document.getElementById('quoteEmail').value;
+            const phone = document.getElementById('quotePhone').value;
+
+            if (!projectType) {
+                alert('Please select what you want (Website, App, or Design)!');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/quotes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        project_type: projectType,
+                        due_date: dueDate,
+                        description: description,
+                        email: email,
+                        phone: phone
+                    })
+                });
+
+                if (response.ok) {
+                    quoteForm.style.display = 'none';
+                    quoteSuccess.classList.remove('hidden');
+                } else {
+                    const data = await response.json();
+                    alert('Error: ' + (data.detail || 'Failed to submit quote request'));
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Network error, please try again later.');
+            }
+        });
+    }
+
     // Console greeting
     console.log('%cWEBHub Premium Loaded!', 'color: #64ffda; font-size: 1.2rem; font-weight: bold;');
 }
+
